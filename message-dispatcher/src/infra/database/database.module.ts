@@ -11,9 +11,7 @@ import { Message, MessageSchema } from './mongoose/schemas/message.schema';
     MongooseModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        uri:
-          configService.get<string>('MONGODB_URL') ||
-          'mongodb://admin:admin123@localhost:27017/message-dispatcher?authSource=admin',
+        uri: configService.get<string>('MONGODB_URL'),
       }),
     }),
     MongooseModule.forFeature([

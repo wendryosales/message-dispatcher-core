@@ -18,20 +18,20 @@ export enum KafkaTopics {
 export class KafkaDispatcherService
   implements DispatcherService, OnModuleInit, OnModuleDestroy
 {
-  private readonly kafka: Kafka;
+  private kafka: Kafka;
   private producer: Producer;
 
-  constructor(private readonly configService: ConfigService) {
-    this.kafka = new Kafka({
-      clientId: 'message-dispatcher',
-      brokers: [
-        this.configService.get<string>('KAFKA_BROKERS') || 'localhost:9092',
-      ],
-    });
-    this.producer = this.kafka.producer();
-  }
+  constructor(private readonly configService: ConfigService) {}
 
   async onModuleInit() {
+    const brokers = this.configService.get<string>('KAFKA_BROKERS');
+
+    this.kafka = new Kafka({
+      clientId: 'message-dispatcher-producer',
+      brokers: brokers.split(','),
+    });
+
+    this.producer = this.kafka.producer();
     await this.producer.connect();
   }
 
