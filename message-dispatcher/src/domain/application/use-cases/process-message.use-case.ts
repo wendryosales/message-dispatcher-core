@@ -42,7 +42,7 @@ export class ProcessMessageUseCase {
     } catch (error) {
       message.incrementAttempts();
 
-      if (!message.canRetry()) {
+      if (!message.canBeAutomaticallyRetried()) {
         message.markFailed(error.message);
         await this.repository.save(message);
         return right({ success: false });

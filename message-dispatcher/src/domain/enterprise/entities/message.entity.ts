@@ -97,11 +97,28 @@ export class MessageEntity extends Entity<MessageEntityProps> {
     this.hasChanged();
   }
 
-  canRetry(): boolean {
+  /**
+   * 🔄 Check if the message can be retried automatically during processing
+   */
+  canBeAutomaticallyRetried(): boolean {
     return (
       this.attempts < 3 &&
       this.status !== MessageStatus.SUCCESS &&
       this.status !== MessageStatus.FAILED
     );
+  }
+
+  /**
+   * ♻️ Check if the message can be manually retried
+   */
+  canBeManuallyRetried(): boolean {
+    return this.attempts >= 3 && this.status === MessageStatus.FAILED;
+  }
+
+  retry() {
+    this.props.status = MessageStatus.PENDING;
+    this.props.attempts = 0;
+    this.props.reason = undefined;
+    this.hasChanged();
   }
 }

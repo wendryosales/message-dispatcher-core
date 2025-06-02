@@ -12,7 +12,7 @@ import { CreateMessagePresenter } from './create-message.presenter';
 import { CreateMessageRequestDto } from './dtos/create-message-request.dto';
 import { CreateMessageResponseDto } from './dtos/create-message-response.dto';
 
-@ApiTags('create message')
+@ApiTags('messages')
 @Controller('/messages')
 export class CreateMessageController {
   constructor(private createMessageUseCase: CreateMessageUseCase) {}
