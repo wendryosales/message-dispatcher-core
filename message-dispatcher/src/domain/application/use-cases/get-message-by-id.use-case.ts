@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Either, left, right } from 'src/core/either-pattern/either';
+import { ResourceNotFoundError } from 'src/core/errors/resource-not-found.error';
 import { MessageRepository } from '../ports/message.repository';
-import { MessageNotFoundError } from './errors/message-not-found.error';
 
 export interface GetMessageByIdInput {
   id: string;
@@ -22,7 +22,7 @@ export interface GetMessageByIdOutput {
 }
 
 export type GetMessageByIdResult = Either<
-  MessageNotFoundError,
+  ResourceNotFoundError,
   GetMessageByIdOutput
 >;
 
@@ -35,7 +35,7 @@ export class GetMessageByIdUseCase {
 
     if (!message) {
       return left(
-        new MessageNotFoundError(`Message with id ${input.id} not found`),
+        new ResourceNotFoundError(`Message with id ${input.id} not found`),
       );
     }
 

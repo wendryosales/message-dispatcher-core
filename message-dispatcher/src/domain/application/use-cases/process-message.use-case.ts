@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { Either, left, right } from 'src/core/either-pattern/either';
+import { ResourceNotFoundError } from 'src/core/errors/resource-not-found.error';
 import { DispatcherService } from '../ports/dispatcher.service';
 import { MessageRepository } from '../ports/message.repository';
 import { NotifierPort } from '../ports/notifier.port';
-import { MessageNotFoundError } from './errors/message-not-found.error';
 
 export interface ProcessMessageInput {
   id: string;
 }
 
 export type ProcessMessageOutput = Either<
-  MessageNotFoundError,
+  ResourceNotFoundError,
   { success: boolean }
 >;
 
@@ -27,7 +27,7 @@ export class ProcessMessageUseCase {
 
     if (!message) {
       return left(
-        new MessageNotFoundError(`Message with id ${input.id} not found`),
+        new ResourceNotFoundError(`Message with id ${input.id} not found`),
       );
     }
 
