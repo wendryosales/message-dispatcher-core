@@ -25,15 +25,12 @@ import {
     }),
   ],
   providers: [
-    // Use Cases
     ProcessMessageUseCase,
-    // Notifiers
     HttpNotifierService,
     EmailNotifierService,
     NotifierFactory,
     NotifierService,
     NotifierServiceProvider,
-    // Services
     KafkaDispatcherServiceProvider,
     MessageProcessorConsumer,
   ],

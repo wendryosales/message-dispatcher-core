@@ -3,19 +3,14 @@ import { Either, left, right } from 'src/core/either-pattern/either';
 import { DispatcherService } from '../ports/dispatcher.service';
 import { MessageRepository } from '../ports/message.repository';
 import { NotifierPort } from '../ports/notifier.port';
+import { MessageNotFoundError } from './errors/message-not-found.error';
 
 export interface ProcessMessageInput {
   id: string;
 }
 
-export class MessageNotFoundException extends Error {
-  constructor() {
-    super('Message not found');
-  }
-}
-
 export type ProcessMessageOutput = Either<
-  MessageNotFoundException,
+  MessageNotFoundError,
   { success: boolean }
 >;
 
@@ -31,7 +26,9 @@ export class ProcessMessageUseCase {
     const message = await this.repository.findById(input.id);
 
     if (!message) {
-      return left(new MessageNotFoundException());
+      return left(
+        new MessageNotFoundError(`Message with id ${input.id} not found`),
+      );
     }
 
     message.markProcessing();
