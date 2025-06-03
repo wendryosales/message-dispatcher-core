@@ -58,9 +58,9 @@ A API:
    - Swagger: http://localhost:3000/api
    - Prometheus: http://localhost:9090
    - **Grafana**: [http://localhost:3001](http://localhost:3001)  
-      Login padrão: `admin` / `admin`  
-   - **Kafka UI**: [http://localhost:8080](http://localhost:8080)  
-   - **MongoDB Express**:[http://localhost:8081](http://localhost:8081)  
+      Login padrão: `admin` / `admin`
+   - **Kafka UI**: [http://localhost:8080](http://localhost:8080)
+   - **MongoDB Express**:[http://localhost:8081](http://localhost:8081)
 
 ## 📘 Documentação da Solução
 
@@ -226,6 +226,12 @@ Ao chamar esse endpoint, o sistema irá reenfileirar a mensagem para reprocessam
 - [x] Exposição de métricas Prometheus
 - [x] Integração com Grafana
 - [x] Testes manuais via script
+
+## 📈 Possíveis Melhorias
+
+- **Dead Letter Queue (DLQ):** mensagens que falharem várias vezes vão para uma fila separada, para que possamos analisar depois o que deu errado.
+
+- **Circuit Breaker:** ao enviar requisições HTTP externas, interrompe tentativas se o destino estiver instável, evitando sobrecarregar e permitir recuperação mais rápida.```
 
 ## 💡 Nota Final
 
