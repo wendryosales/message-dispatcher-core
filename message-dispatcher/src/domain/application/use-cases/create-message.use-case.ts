@@ -6,6 +6,7 @@ import {
 } from 'src/domain/enterprise/entities/message.entity';
 import { DispatcherService } from '../ports/dispatcher.service';
 import { MessageRepository } from '../ports/message.repository';
+import { MetricsPort } from '../ports/metrics.port';
 
 export type CreateMessageUsecaseInput = {
   type: MessageType;
@@ -27,6 +28,7 @@ export class CreateMessageUseCase {
   constructor(
     private readonly messageRepository: MessageRepository,
     private readonly dispatcherService: DispatcherService,
+    private readonly metricsPort: MetricsPort,
   ) {}
 
   async execute(
@@ -40,6 +42,8 @@ export class CreateMessageUseCase {
 
     await this.messageRepository.save(message);
     await this.dispatcherService.enqueueForProcessing(message);
+
+    this.metricsPort.recordMessageCreated(request.type);
 
     return right({
       id: message.id.toString(),

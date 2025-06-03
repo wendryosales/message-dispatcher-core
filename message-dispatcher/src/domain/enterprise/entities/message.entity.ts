@@ -98,7 +98,7 @@ export class MessageEntity extends Entity<MessageEntityProps> {
   }
 
   /**
-   * 🔄 Check if the message can be retried automatically during processing
+   * Check if the message can be retried automatically during processing
    */
   canBeAutomaticallyRetried(): boolean {
     return (
@@ -109,7 +109,7 @@ export class MessageEntity extends Entity<MessageEntityProps> {
   }
 
   /**
-   * ♻️ Check if the message can be manually retried
+   * Check if the message can be manually retried
    */
   canBeManuallyRetried(): boolean {
     return this.attempts >= 3 && this.status === MessageStatus.FAILED;
@@ -120,5 +120,12 @@ export class MessageEntity extends Entity<MessageEntityProps> {
     this.props.attempts = 0;
     this.props.reason = undefined;
     this.hasChanged();
+  }
+
+  /**
+   * Calculate the backoff timeout for the message in seconds
+   */
+  backoffTimeout(): number {
+    return this.attempts * 4;
   }
 }

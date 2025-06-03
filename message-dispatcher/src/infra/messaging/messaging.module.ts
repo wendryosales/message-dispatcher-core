@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { DispatcherService } from 'src/domain/application/ports/dispatcher.service';
 import { ProcessMessageUseCase } from 'src/domain/application/use-cases/process-message.use-case';
 import { DatabaseModule } from '../database/database.module';
+import { MetricsModule } from '../metrics/metrics.module';
 import { MessageProcessorConsumer } from './kafka/consumers/message-processor.consumer';
 import { KafkaDispatcherServiceProvider } from './kafka/services/kafka-dispatcher.service';
 import { EmailNotifierService } from './notifiers/email-notifier.service';
@@ -16,6 +17,7 @@ import {
 @Module({
   imports: [
     DatabaseModule,
+    MetricsModule,
     HttpModule.register({
       timeout: 10000, // 10 segundos
       maxRedirects: 5,

@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { AxiosError } from 'axios';
 import { catchError, firstValueFrom, timeout } from 'rxjs';
+import { MetricsPort } from 'src/domain/application/ports/metrics.port';
 import { NotifierPort } from 'src/domain/application/ports/notifier.port';
 import { MessageEntity } from 'src/domain/enterprise/entities/message.entity';
 
@@ -9,11 +10,16 @@ import { MessageEntity } from 'src/domain/enterprise/entities/message.entity';
 export class HttpNotifierService extends NotifierPort {
   private readonly DEFAULT_TIMEOUT = 10000; // 10 segundos
 
-  constructor(private readonly httpService: HttpService) {
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly metricsPort: MetricsPort,
+  ) {
     super();
   }
 
   async send(message: MessageEntity): Promise<void> {
+    const startTime = Date.now();
+
     try {
       const response$ = this.httpService
         .post(message.destination, message.payload, {
@@ -30,11 +36,22 @@ export class HttpNotifierService extends NotifierPort {
         );
 
       await firstValueFrom(response$);
+
+      // Record success metrics
+      const duration = (Date.now() - startTime) / 1000;
+      this.metricsPort.recordNotificationDuration('http', duration);
+      this.metricsPort.recordNotificationSent('http', 'success');
+
     } catch (error) {
       console.error('❌ HTTP notification failed:', {
         destination: message.destination,
         error: error.message,
       });
+
+      // Record failure metrics
+      const duration = (Date.now() - startTime) / 1000;
+      this.metricsPort.recordNotificationDuration('http', duration);
+      this.metricsPort.recordNotificationSent('http', 'failed');
 
       throw error;
     }

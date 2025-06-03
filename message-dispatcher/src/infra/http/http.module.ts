@@ -4,6 +4,7 @@ import { GetMessageByIdUseCase } from 'src/domain/application/use-cases/get-mess
 import { RetryMessageUseCase } from 'src/domain/application/use-cases/retry-message.use-case';
 import { DatabaseModule } from '../database/database.module';
 import { MessagingModule } from '../messaging/messaging.module';
+import { MetricsModule } from '../metrics/metrics.module';
 import { CreateMessageController } from './controllers/create-message/create-message.controller';
 import { GetMessageByIdController } from './controllers/get-message-by-id/get-message-by-id.controller';
 import { HealthController } from './controllers/health.controller';
@@ -17,7 +18,7 @@ const filters = [
 ];
 
 @Module({
-  imports: [DatabaseModule, MessagingModule],
+  imports: [DatabaseModule, MessagingModule, MetricsModule],
   controllers: [
     CreateMessageController,
     GetMessageByIdController,

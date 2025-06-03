@@ -9,9 +9,9 @@ export class NotifierService extends NotifierPort {
     super();
   }
 
-  async send(message: MessageEntity): Promise<void> {
+  async send(message: MessageEntity, timeoutInSeconds: number): Promise<void> {
     const notifier = this.notifierFactory.getNotifier(message.type);
-    await notifier.send(message);
+    await notifier.send(message, timeoutInSeconds);
   }
 }
 

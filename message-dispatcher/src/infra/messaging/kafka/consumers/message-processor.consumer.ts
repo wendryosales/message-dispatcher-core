@@ -1,6 +1,7 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Consumer, Kafka } from 'kafkajs';
+import { MetricsPort } from 'src/domain/application/ports/metrics.port';
 import { ProcessMessageUseCase } from 'src/domain/application/use-cases/process-message.use-case';
 import { KafkaMessageMapper } from '../mappers/kafka-message.mapper';
 import { KafkaTopics } from '../services/kafka-dispatcher.service';
@@ -13,6 +14,7 @@ export class MessageProcessorConsumer implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly configService: ConfigService,
     private readonly processMessageUseCase: ProcessMessageUseCase,
+    private readonly metricsPort: MetricsPort,
   ) {
     this.kafka = new Kafka({
       clientId: 'message-processor',
@@ -45,6 +47,11 @@ export class MessageProcessorConsumer implements OnModuleInit, OnModuleDestroy {
         try {
           const kafkaPayload = KafkaMessageMapper.fromKafkaMessage(
             message.value.toString(),
+          );
+
+          this.metricsPort.recordMessageConsumed(
+            topic,
+            'message-processor-group',
           );
 
           await this.processMessageUseCase.execute({ id: kafkaPayload.id });

@@ -2,6 +2,7 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Kafka, Producer } from 'kafkajs';
 import { DispatcherService } from 'src/domain/application/ports/dispatcher.service';
+import { MetricsPort } from 'src/domain/application/ports/metrics.port';
 import {
   MessageEntity,
   MessageType,
@@ -18,20 +19,22 @@ export enum KafkaTopics {
 export class KafkaDispatcherService
   implements DispatcherService, OnModuleInit, OnModuleDestroy
 {
-  private kafka: Kafka;
+  private readonly kafka: Kafka;
   private producer: Producer;
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly metricsPort: MetricsPort,
+  ) {
+    this.kafka = new Kafka({
+      clientId: 'message-dispatcher',
+      brokers: [this.configService.get<string>('KAFKA_BROKERS')],
+    });
+  }
 
   async onModuleInit() {
-    const brokers = this.configService.get<string>('KAFKA_BROKERS');
+    await this.createProducer();
 
-    this.kafka = new Kafka({
-      clientId: 'message-dispatcher-producer',
-      brokers: brokers.split(','),
-    });
-
-    this.producer = this.kafka.producer();
     await this.producer.connect();
   }
 
@@ -47,15 +50,23 @@ export class KafkaDispatcherService
       topic,
       messages: [kafkaMessage],
     });
+
+    this.metricsPort.recordMessageProduced(topic);
   }
 
-  private getTopicByMessageType(type: string): string {
-    const topicMap = new Map<string, string>([
-      [MessageType.HTTP, KafkaTopics.HTTP_MESSAGES],
-      [MessageType.EMAIL, KafkaTopics.EMAIL_MESSAGES],
-    ]);
+  private async createProducer() {
+    this.producer = this.kafka.producer();
+  }
 
-    return topicMap.get(type) || KafkaTopics.UNKNOWN_MESSAGES;
+  private getTopicByMessageType(type: MessageType): string {
+    switch (type) {
+      case MessageType.HTTP:
+        return KafkaTopics.HTTP_MESSAGES;
+      case MessageType.EMAIL:
+        return KafkaTopics.EMAIL_MESSAGES;
+      default:
+        return KafkaTopics.UNKNOWN_MESSAGES;
+    }
   }
 }
 
