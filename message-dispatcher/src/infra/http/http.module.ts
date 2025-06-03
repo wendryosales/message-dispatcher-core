@@ -9,6 +9,7 @@ import { CreateMessageController } from './controllers/create-message/create-mes
 import { GetMessageByIdController } from './controllers/get-message-by-id/get-message-by-id.controller';
 import { HealthController } from './controllers/health.controller';
 import { RetryMessageController } from './controllers/retry-message/retry-message.controller';
+import { TestController } from './controllers/test.controller';
 import { MessageCannotBeRetriedFilterProvider } from './filters/message-cannot-be-retried.filter';
 import { ResourceNotFoundFilterProvider } from './filters/resource-not-found.filter';
 
@@ -24,6 +25,7 @@ const filters = [
     GetMessageByIdController,
     RetryMessageController,
     HealthController,
+    TestController,
   ],
   providers: [
     CreateMessageUseCase,
