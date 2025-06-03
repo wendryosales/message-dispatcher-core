@@ -226,6 +226,7 @@ Ao chamar esse endpoint, o sistema irá reenfileirar a mensagem para reprocessam
 - [x] Exposição de métricas Prometheus
 - [x] Integração com Grafana
 - [x] Testes manuais via script
+- [x] Testes Unitários na camada de domínio
 
 ## 📈 Possíveis Melhorias
 
