@@ -2,7 +2,7 @@ import {
   MessageEntity,
   MessageType,
 } from 'src/domain/enterprise/entities/message.entity';
-import { MockMetricsPort } from 'test/adapters/mock-metrics.port';
+import { MockMetricsAdapter } from 'test/adapters/mock-metrics.port';
 
 import { InMemoryMessageRepository } from 'test/repositories/in-memory-message.repository';
 import { MockDispatcherService } from 'test/services/mock-dispatcher.service';
@@ -12,12 +12,12 @@ describe('CreateMessageUseCase', () => {
   let sut: CreateMessageUseCase;
   let messageRepository: InMemoryMessageRepository;
   let dispatcherService: MockDispatcherService;
-  let metricsPort: MockMetricsPort;
+  let metricsPort: MockMetricsAdapter;
 
   beforeEach(() => {
     messageRepository = new InMemoryMessageRepository();
     dispatcherService = new MockDispatcherService();
-    metricsPort = new MockMetricsPort();
+    metricsPort = new MockMetricsAdapter();
     sut = new CreateMessageUseCase(
       messageRepository,
       dispatcherService,
