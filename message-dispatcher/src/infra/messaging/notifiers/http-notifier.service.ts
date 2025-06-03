@@ -17,8 +17,14 @@ export class HttpNotifierService extends NotifierPort {
     super();
   }
 
-  async send(message: MessageEntity): Promise<void> {
+  async send(message: MessageEntity, timeoutInSeconds: number): Promise<void> {
     const startTime = Date.now();
+
+    if (timeoutInSeconds > 0) {
+      await new Promise((resolve) =>
+        setTimeout(resolve, timeoutInSeconds * 1000),
+      );
+    }
 
     try {
       const response$ = this.httpService
@@ -41,11 +47,11 @@ export class HttpNotifierService extends NotifierPort {
       const duration = (Date.now() - startTime) / 1000;
       this.metricsPort.recordNotificationDuration('http', duration);
       this.metricsPort.recordNotificationSent('http', 'success');
-
     } catch (error) {
       console.error('❌ HTTP notification failed:', {
         destination: message.destination,
         error: error.message,
+        delayUsed: timeoutInSeconds,
       });
 
       // Record failure metrics
