@@ -1,0 +1,18 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # Message Dispatcher API
+  - job_name: "message-dispatcher-api"
+    static_configs:
+      - targets: ["message-dispatcher-api:3000"]
+    metrics_path: "/metrics"
+    scrape_interval: 10s
+    scrape_timeout: 10s
+    scheme: http
