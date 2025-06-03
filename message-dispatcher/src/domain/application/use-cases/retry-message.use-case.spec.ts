@@ -3,7 +3,7 @@ import {
   MessageEntity,
   MessageType,
 } from 'src/domain/enterprise/entities/message.entity';
-import { MockMetricsAdapter } from 'test/adapters/mock-metrics.port';
+import { MockMetricsAdapter } from 'test/adapters/mock-metrics.adapter';
 import { InMemoryMessageRepository } from 'test/repositories/in-memory-message.repository';
 import { MockDispatcherService } from 'test/services/mock-dispatcher.service';
 import {
